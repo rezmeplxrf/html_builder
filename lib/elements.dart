@@ -29,7 +29,7 @@ Node text(String text) => TextNode(text);
 Node css({required String selector, required Map<String, dynamic> style}) {
   final styleContent =
       style.entries.map((e) => '${e.key}: ${e.value};').join('\n');
-  final cssContent = '$selector {$styleContent}';
+  final cssContent = '$selector { $styleContent }';
   return text(cssContent);
 }
 

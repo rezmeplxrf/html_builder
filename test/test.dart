@@ -3,13 +3,14 @@ import 'package:csslib/parser.dart';
 import 'package:html/parser.dart' as html5;
 
 void main() {
-  final dom = css(selector: '#someid', style: {'color': 'blue'});
+  final dom =
+      css(selector: '#someid', style: {'color': 'blue', 'font-size': '12px'});
   var rendered = StringRenderer().render(dom);
+  print(rendered);
 
   var parsed = html5.parse(rendered);
 
   final style = parsed.querySelector('style')!;
-  print(style.text);
-  final result = parse(style.text);
-  print(result.toDebugString());
+
+  print(style.nodes.first);
 }

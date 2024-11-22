@@ -13,22 +13,25 @@ abstract class StringRenderer implements Renderer<String> {
   /// If [html5] is not `false` (default: `true`), then self-closing elements will be rendered with a slash before the last angle bracket, ex. `<br />`.
   /// If [pretty] is `true` (default), then [whitespace] (default: `'  '`) will be inserted between nodes.
   /// You can also provide a [doctype] (default: `html`).
-  factory StringRenderer(
+    factory StringRenderer(
           {bool html5 = true,
           bool pretty = true,
           String doctype = 'html',
-          String whitespace = '  '}) =>
+          String whitespace = '  ',
+          bool minified = false}) =>
       pretty == true
           ? _PrettyStringRendererImpl(
               html5: html5 != false, doctype: doctype, whitespace: whitespace)
-          : _StringRendererImpl(html5: html5 != false, doctype: doctype);
+          : _StringRendererImpl(
+              html5: html5 != false, doctype: doctype, minified: minified);
 }
 
 class _StringRendererImpl implements StringRenderer {
   final String? doctype;
   final bool? html5;
+  final bool minified;
 
-  _StringRendererImpl({this.html5, this.doctype});
+  _StringRendererImpl({this.html5, this.doctype, this.minified = false});
 
   void _renderInto(Node node, StringBuffer buf) {
     if (node is TextNode) {
@@ -72,7 +75,12 @@ class _StringRendererImpl implements StringRenderer {
     var buf = StringBuffer();
     if (doctype?.isNotEmpty == true) buf.write('<!DOCTYPE $doctype>');
     _renderInto(rootNode, buf);
-    return buf.toString();
+    var result = buf.toString();
+    return minified ? _minify(result) : result;
+  }
+
+  String _minify(String html) {
+    return html.replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 }
 
